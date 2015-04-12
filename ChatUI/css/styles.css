@@ -1,0 +1,26 @@
+.vertical-center {
+    min-height: 80%;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.padding5 {
+    padding: 5px;
+}
+
+.border-bottom {
+    border-bottom: solid 1px #DFD7CA ;
+}
+
+.text-size-200-percent {
+    font-size: 200%;
+}
+
+.text-size-120-percent {
+    font-size: 120%;
+}
+
+.margin-top-15 {
+    margin-top: 15%;
+}

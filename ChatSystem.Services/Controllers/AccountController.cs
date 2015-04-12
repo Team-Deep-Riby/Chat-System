@@ -53,19 +53,45 @@ namespace ChatSystem.Services.Controllers
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
-        // GET api/Account/UserInfo
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        //// GET api/Account/UserInfo
+        //[HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
+        //[Route("UserInfo")]
+        //public UserInfoViewModel GetUserInfo()
+        //{
+        //    ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
+
+        //    return new UserInfoViewModel
+        //    {
+        //        Email = User.Identity.GetUserName(),
+        //        Id = User.Identity.GetUserId(),
+        //        HasRegistered = externalLogin == null,
+        //        LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
+        //    };
+        //}
+
+        // GET api/Account/UserId
+        [HttpGet]
         [Route("UserInfo")]
-        public UserInfoViewModel GetUserInfo()
+        public IHttpActionResult GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
 
-            return new UserInfoViewModel
+            var id = User.Identity.GetUserId();
+            if (id == null)
             {
-                Email = User.Identity.GetUserName(),
+                return this.BadRequest("User not fount.");
+            }
+
+            var user = new UserInfoViewModel
+            {
+                Username = User.Identity.GetUserName(),
+                Id = User.Identity.GetUserId(),
                 HasRegistered = externalLogin == null,
                 LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
             };
+  
+
+            return this.Ok(user);
         }
 
         // POST api/Account/Logout
@@ -330,7 +356,7 @@ namespace ChatSystem.Services.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new User() { UserName = model.Email, Email = model.Email };
+            var user = new User() { UserName = model.UserName, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
