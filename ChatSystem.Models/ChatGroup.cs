@@ -1,6 +1,7 @@
 ﻿namespace ChatSystem.Models
 {
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
     public class ChatGroup
@@ -16,6 +17,9 @@
 
         [Required]
         public string Name { get; set; }
+
+        [DefaultValue(0)]
+        public int UnreceivedMessages { get; set; }
 
         public virtual ICollection<User> Users
         {

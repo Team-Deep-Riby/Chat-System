@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Microsoft.AspNet.Identity;
 
 namespace ChatSystem.Services.Controllers
 {
@@ -22,20 +23,21 @@ namespace ChatSystem.Services.Controllers
         }
 
         [HttpGet]
-        [ActionName("Index")]
+        [Route]
         public IHttpActionResult GetAllGroups()
         {
             var groups = data.Groups.All()
                 .Select(g => new GroupViewModel
                 {
                     GroupId = g.Id, 
-                    GroupName = g.Name
+                    GroupName = g.Name,
+                    UnreceivedMessages = g.UnreceivedMessages
                 });
             return Ok(groups);
         }
 
         [HttpPost]
-        [ActionName("create")]
+        [Route("create")]
         public IHttpActionResult CreateNewGroup(string groupName)
         {
             var group = new ChatGroup { Name = groupName };
@@ -89,6 +91,48 @@ namespace ChatSystem.Services.Controllers
             return this.Ok();   
         }
 
+        [HttpGet]
+        [Route("~/api/Friends")]
+        public IHttpActionResult GetFriendsGroups()
+        {
+            var currentUserId = User.Identity.GetUserId();
+
+            var friendsGroups = from g in data.Groups.All()
+                                where g.Users.Count() == 2 && g.Users.Where(u => u.Id == currentUserId).Any()
+                                select new FriendViewModel
+                                {
+                                    FriendName = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
+                                    GroupId = g.Id,
+                                    UnreceivedMessages = g.UnreceivedMessages
+                                };
+
+            return Ok(friendsGroups);
+        }
+
+        [HttpPost]
+        [Route("~/api/Friends/add/{userId}")]
+        public IHttpActionResult CreateNewFriendGroup(string userId)
+        {
+            var friend = data.Users.All().Where(u => u.Id == userId).FirstOrDefault();
+            if (friend == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "User not found");
+            }
+            var currentUserId = User.Identity.GetUserId();
+            var currentUser = data.Users.All().Where(u => u.Id == currentUserId).FirstOrDefault();
+
+            var group = new ChatGroup
+            {
+                Name = currentUser.UserName + "_" + friend.UserName
+            };
+
+            group.Users.Add(currentUser);
+            group.Users.Add(friend);
+            data.Groups.Add(group);
+            data.Groups.SaveChanges();
+
+            return Ok();
+        }
 
         private IHttpActionResult CustomResult(HttpStatusCode code,string message)
         {

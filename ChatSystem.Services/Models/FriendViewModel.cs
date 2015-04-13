@@ -5,9 +5,9 @@ using System.Web;
 
 namespace ChatSystem.Services.Models
 {
-    public class GroupViewModel
+    public class FriendViewModel
     {
-        public string GroupName { get; set; }
+        public string FriendName { get; set; }
 
         public int GroupId { get; set; }
 
