@@ -3,27 +3,41 @@ var app = app || {};
 app.views = (function () {
     function showHomePage() {
         loadTemplate('home-page')
-            .then(mustacheRender)
+            .then(function (tamplate) {
+                mustacheRender(tamplate, null, '#main');
+            })
             .done();
     }
 
     function showUserPage(sessionData) {
         loadTemplate('user-page')
-            .then(function (tamplate) {
-                mustacheRender(tamplate, sessionData);
+            .then(function (template) {
+                mustacheRender(template, sessionData, '#main');
+            })
+            .done();
+    }
+
+    function showFriends(sessionData) {
+        loadTemplate('friends-and-groups')
+            .then(function (template) {
+                mustacheRender(template, sessionData, '#friends-and-groups');
             })
             .done();
     }
 
     function showLoginForm() {
         loadTemplate('login-form')
-            .then(mustacheRender)
+            .then(function(template){
+                mustacheRender(template, null, '#main')
+            })
             .done();
     }
 
     function showRegisterForm() {
         loadTemplate('register-form')
-            .then(mustacheRender)
+            .then(function (tamplate) {
+                mustacheRender(tamplate, null, '#main');
+            })
             .done();
     }
 
@@ -36,10 +50,10 @@ app.views = (function () {
         return defer.promise;
     }
 
-    function mustacheRender(template, data) {
+    function mustacheRender(template, data, domElementId) {
         var output = Mustache.render(template, data);
-        $('#main').html('');
-        $('#main').html(output);
+        $(domElementId).html('');
+        $(domElementId).html(output);
     }
 
     return {
@@ -47,5 +61,6 @@ app.views = (function () {
         showLoginForm: showLoginForm,
         showRegisterForm: showRegisterForm,
         showUserPage: showUserPage,
+        showFriends: showFriends
     };
 })();

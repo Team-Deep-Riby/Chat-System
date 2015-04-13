@@ -1,6 +1,20 @@
 var app = app || {};
 
-//TODO new data and fake data
+
+Object.prototype.extends = function (parent) {
+    if (!Object.create) {
+        Object.prototype.create = function (proto) {
+            function F() {
+            };
+            F.prototype = proto;
+            return new F;
+        };
+    }
+
+    this.prototype = Object.create(parent.prototype);
+    this.prototype.constructor = this;
+};
+
 app.data = (function(){
     var headers = {
       //  "Content-Type" : "application/x-www-form-urlencoded;charset=utf-8",
@@ -18,7 +32,8 @@ app.data = (function(){
     };
 
     function Data(){
-        // this.products = new Table(parseComData, 'Product');
+        this.friends = new Table(serviceData, 'Friends');
+        this.groups = new Table(serviceData, 'Friends');
         this.users = new User(serviceUser);
     }
 
@@ -54,9 +69,9 @@ app.data = (function(){
             return requester.post(this._service.url + 'api/Account/Register', 'application/json', this._service.headers, user);
         };
 
-        User.prototype.getUserInfo = function (acessToken) {
+        User.prototype.getUserInfo = function (accessToken) {
             headers = this._service.headers;
-            headers["Authorization"] = "bearer " + acessToken;
+            headers["Authorization"] = "bearer " + accessToken;
             return requester.get(this._service.url + 'api/Account/UserInfo', headers);
         }
 
@@ -81,34 +96,32 @@ app.data = (function(){
             this._service.headers[key] = value;
         };
 
-        Table.prototype.readAllRows = function () {
-            return requester.get(this._dataUrl, this._service.headers);
-        };
-
-        Table.prototype.readAllRowsWhere = function (column, value) {
-            if(value instanceof Object){
-                value = JSON.stringify(value);
-            } else {
-                value = '"' + value + '"';
+        Table.prototype.get = function(accessToken, groupId){
+            var id = '';
+            if(groupId != undefined){
+                id = '/' + groupId;
             }
 
-            return requester.get(this._dataUrl  + '?where={"' + column + '": ' + value + '}',
-                this._service.headers);
-        };
-
-        Table.prototype.addRow = function (row) {
-            return requester.post( this._dataUrl, this._service.headers, row);
-        };
-
-        Table.prototype.editRow = function (objectId, row) {
-           return  requester.put( this._dataUrl + '/' + objectId, this._service.headers, row)
-        };
-
-        Table.prototype.deleteRow = function (objectId) {
-            return requester.delete( this._dataUrl + '/' + objectId, this._service.headers);
+            this.addHeader("Authorization","bearer " + accessToken);
+            return requester.get(this._dataUrl + id, this._service.headers)
         };
 
         return Table;
+    })();
+
+    var Friends = (function () {
+        function Friends(service) {
+            Table.call(this, service, 'Friends');
+        }
+
+        Friends.extends(Table);
+
+        Friends.prototype.addUser = function(userId, accessToken) {
+            this.addHeader("Authorization","bearer " + accessToken);
+            return requester.post(this._dataUrl + '/add/' + userId, 'application/json', this._service.headers, null);
+        };
+
+        return Friends;
     })();
 
     return {

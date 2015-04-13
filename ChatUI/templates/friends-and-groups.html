@@ -1,24 +1,6 @@
-<dir class="row container-fluid">
-    <div class="padding5 table-bordered">
-        <ul class="nav nav-pills">
-            <li class="active"><a href="#">Friends <span class="badge">42</span></a></li>
-            <li><a href="#">Chat Groups <span class="badge">3</span></a></li>
-        </ul>
-    </div>
-</dir>
-<div class="row container-fluid">
-    <ul class="list-group">
-        <li class="list-group-item">
-            <span class="badge">14</span>
-            <a href="#">Gosho</a>
-        </li>
-        <li class="list-group-item">
-            <span class="badge">2</span>
-            Pesho
-        </li>
-        <li class="list-group-item">
-            <span class="badge">1</span>
-            Tosho
-        </li>
-    </ul>
-</div>
+{{#items}}
+<li id="{{groupId}}" class="list-group-item">
+    <span class="badge">{{#hasMessages}}{{countOfUnrecivedMessages}}{{/hasMessages}}</span>
+    <a>{{name}}</a>
+</li>
+{{/items}}

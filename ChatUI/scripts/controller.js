@@ -10,20 +10,26 @@ app.controller = (function () {
 
     Controller.prototype.loadRouter = function () {
         var _this = this;
+
         _this._views.showHomePage();
 
         this._router = Sammy(function () {
             this.get('#/', function () {
-                _this._views.showHomePage();
-            });
+                if(sessionStorage['st']){
+                    _this._views.showUserPage(sessionStorage);
+                    loadFriendsOrGroups.call(_this, 'friends');
+                } else {
+                    _this._views.showHomePage();
+                }
+              });
 
             this.get('#/user', function () {
                 if(sessionStorage['st']){
                     _this._views.showUserPage(sessionStorage);
+                    loadFriendsOrGroups.call(_this, 'friends');
                 } else {
                     this.setLocation(baseUrl);
                 }
-
             });
 
             this.get('#/login', function () {
@@ -49,8 +55,16 @@ app.controller = (function () {
             login.call(_this, ev);
         });
 
-        $('header').on('click', '#logout-button', function (e) {
+        $('#main').on('click', '#logout-button', function (e) {
             logout.call(_this);
+        });
+
+        $('#main').on('click', '#friends', function (e) {
+            loadFriendsOrGroups.call(_this, 'friends');
+        });
+
+        $('#main').on('click', '#groups', function (e) {
+            loadFriendsOrGroups.call(_this, 'groups');
         });
     };
 
@@ -141,107 +155,44 @@ app.controller = (function () {
         this._views.showHomePage();
     }
 
+    function loadFriendsOrGroups(itemType) {
 
-    function addProduct(e) {
-        var _this = this;
 
-        var user = _this._data.users.getLoginUserData();
-        var $form = $(e.target).parent().parent();
-        var acl = {};
-
-        acl[user.id] = {
-            "read": true,
-            "write": true
-        };
-        acl["*"] = {
-            "read": true
-        };
-
-        var product = {
-            name: $form.find('#name').val(),
-            category: $form.find('#category').val(),
-            price: Number($form.find('#price').val()),
-            ACL: acl
-        };
-
-        _this._data.products.addRow(product)
-            .then(function (data) {
-                _this._router.setLocation('#/products');
-                boxMessage.info('Product successfully added.');
-            }, function (error) {
-                boxMessage.error('Error: ' + data.responseJSON.error);
-            })
-            .done();
-    }
-
-    function loadProducts() {
-        var _this = this;
-        var user = _this._data.users.getLoginUserData();
-        if (!user) {
-            _this._router.setLocation('#/');
+        if(itemType == 'friends'){
+            $('#friends').addClass('active');
+            $('#groups').removeClass('active');
+            var items = [
+                {name: "Gosho", groupId: 5, countOfUnrecivedMessages: 0},
+                {name: "Pesho", groupId: 6, countOfUnrecivedMessages: 6},
+                {name: "Mimi", groupId: 7, countOfUnrecivedMessages: 5},
+            ];
+        } else {
+            $('#groups').addClass('active');
+            $('#friends').removeClass('active');
+            var items = [
+                {name: "Team", groupId: 5, countOfUnrecivedMessages: 0},
+                {name: "Pesho, Mimi and Gosho", groupId: 6, countOfUnrecivedMessages: 0},
+                {name: "Mimi's team", groupId: 7, countOfUnrecivedMessages: 2},
+            ];
         }
 
-        _this._data.products.readAllRows()
-            .then(function (data) {
-                data.results.forEach(function (result) {
-                    //var keys = Object.keys(result.ACL)
-                    if (result.ACL && result.ACL[user.id]) {
-                        var $footer = $('<footer class="product-footer" id="{{objectId}}">' +
-                        '<a href="#/products/edit/{{objectId}}">' +
-                        ' <button class="edit-button">Edit</button>\n\r' +
-                        '</a>' +
-                        '<a href="#/products">' +
-                        '<button class="delete-button">Delete</button>' +
-                        '</a>' +
-                        '</footer>');
-                        result['footer'] = $footer.html();
+
+        var data = {
+            items: items,
+            hasMessages: function () {
+                return function (text, render) {
+                    var count = Number(render(text));
+                    if(count > 0){
+                        return count.toString();
                     }
-                });
-                _this._views.showProductList(data);
-            }, function (error) {
-                boxMessage.error('Error... try again!!!');
-            })
-            .done();
-    }
 
-    function deleteProduct(e) {
-        var _this = this;
-        var id = $(e.target).parent().parent().attr('id');
-        var user = _this._data.users.getLoginUserData();
-        _this._data.products.addHeader('X-Parse-Session-Token', user.sessionToken);
-        _this._data.products.deleteRow(id)
-            .then(function (data) {
-                loadProducts.call(_this);
-                boxMessage.info('Product successfully deleted.');
-            }, function (error) {
-                boxMessage.error('Error: ' + data.responseJSON.error);
-            })
-            .done();
-    }
-
-    function editProduct(e) {
-        var $form = $(e.target).parent().parent();
-        var product = {
-            name: $form.find('#item-name').val(),
-            category: $form.find('#category').val(),
-            price: Number($form.find('#price').val())
+                    return "";
+                }
+            }
         };
 
-        var id = $(e.target).attr('data-id');
-
-        var _this = this;
-        var user = _this._data.users.getLoginUserData();
-        _this._data.products.addHeader('X-Parse-Session-Token', user.sessionToken);
-        _this._data.products.editRow(id, product)
-            .then(function (data) {
-                _this._router.setLocation('#/products');
-                boxMessage.info('Product successfully edited.');
-            }, function (error) {
-                boxMessage.error('Error: ' + data.responseJSON.error);
-            })
-            .done();
+        this._views.showFriends(data);
     }
-
 
     return {
         get: function (data, views) {
