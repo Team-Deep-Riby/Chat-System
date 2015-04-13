@@ -1,19 +1,19 @@
 var app = app || {};
 
 
-Object.prototype.extends = function (parent) {
-    if (!Object.create) {
-        Object.prototype.create = function (proto) {
-            function F() {
-            };
-            F.prototype = proto;
-            return new F;
-        };
-    }
-
-    this.prototype = Object.create(parent.prototype);
-    this.prototype.constructor = this;
-};
+//Object.prototype.extends = function (parent) {
+//    if (!Object.create) {
+//        Object.prototype.create = function (proto) {
+//            function F() {
+//            };
+//            F.prototype = proto;
+//            return new F;
+//        };
+//    }
+//
+//    this.prototype = Object.create(parent.prototype);
+//    this.prototype.constructor = this;
+//};
 
 app.data = (function(){
     var headers = {
@@ -109,20 +109,20 @@ app.data = (function(){
         return Table;
     })();
 
-    var Friends = (function () {
-        function Friends(service) {
-            Table.call(this, service, 'Friends');
-        }
-
-        Friends.extends(Table);
-
-        Friends.prototype.addUser = function(userId, accessToken) {
-            this.addHeader("Authorization","bearer " + accessToken);
-            return requester.post(this._dataUrl + '/add/' + userId, 'application/json', this._service.headers, null);
-        };
-
-        return Friends;
-    })();
+    //var Friends = (function () {
+    //    function Friends(service) {
+    //        Table.call(this, service, 'Friends');
+    //    }
+    //
+    //    Friends.extends(Table);
+    //
+    //    Friends.prototype.addUser = function(userId, accessToken) {
+    //        this.addHeader("Authorization","bearer " + accessToken);
+    //        return requester.post(this._dataUrl + '/add/' + userId, 'application/json', this._service.headers, null);
+    //    };
+    //
+    //    return Friends;
+    //})();
 
     return {
         get: new Data()
