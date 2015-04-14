@@ -69,6 +69,24 @@
 
             return Ok(messages);
         }
+		
+		[HttpPost]
+        [Route("send")]
+        public IHttpActionResult PostMessage([FromBody]MessagePostModel msg)
+        {
+            var userId = User.Identity.GetUserId();
+            var message = new Message
+            {
+                Content = msg.Content,
+                DateTime = DateTime.Now,
+                SenderId = userId,
+                GroupId = msg.GroupId
+            };
 
+            this.Data.Messages.Add(message);
+            this.Data.SaveChanges();
+
+            return Ok();
+        }
 	}
 }
