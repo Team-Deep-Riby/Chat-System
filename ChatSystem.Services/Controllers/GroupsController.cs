@@ -8,7 +8,7 @@
     using Microsoft.AspNet.Identity;
     using ChatSystem.Data;
     using ChatSystem.Models;
-    using Services.Models;
+    using ChatSystem.Services.Models;
     using System.Data.Entity.Validation;
     using System.Diagnostics;
 
@@ -23,7 +23,7 @@
         {
             var currentUserId = User.Identity.GetUserId();
 
-            var groups = this.Data.Groups.All().Where(g => g.Users.Count > 2 && g.Users.Any(u => u.Id == currentUserId))
+            var groups = this.Data.Groups.All().Where(g => g.Name != "Friends" && g.Users.Any(u => u.Id == currentUserId))
                 .Select(g => new GroupFullModel
                 {
                     GroupId = g.Id, 
@@ -140,7 +140,7 @@
 
             var group = new ChatGroup
             {
-                Name = currentUser.UserName + "_" + friend.UserName
+                Name = "Friends"
             };
 
             group.Users.Add(currentUser);
