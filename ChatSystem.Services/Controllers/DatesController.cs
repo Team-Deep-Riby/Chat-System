@@ -15,8 +15,7 @@
     public class DatesController : BaseApiController
     {
 
-        public DatesController(IChatSystemData data)
-            : base(data)
+        public DatesController(): base()
         {
         }
 

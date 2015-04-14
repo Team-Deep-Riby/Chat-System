@@ -9,13 +9,15 @@
     using ChatSystem.Data;
     using ChatSystem.Models;
     using Services.Models;
+    using System.Data.Entity.Validation;
+    using System.Diagnostics;
 
     [Authorize]
     [RoutePrefix("api/Groups")]
     public class GroupsController : BaseApiController
     {
 
-        public GroupsController(IChatSystemData data) : base(data)
+        public GroupsController() : base()
         {
         }
 
@@ -30,7 +32,7 @@
                 .Select(g => new GroupViewModel
                 {
                     GroupId = g.Id, 
-                    GroupName = g.Name,
+                    Name = g.Name,
                     UnreceivedMessages = g.UnreceivedMessages
                 });
             return Ok(groups);
@@ -42,8 +44,27 @@
         {
             var group = new ChatGroup { Name = groupName };
             this.Data.Groups.Add(group);
-            this.Data.Groups.SaveChanges();
-
+            
+            try
+            {
+                this.Data.SaveChanges();
+            }
+            catch (DbEntityValidationException e)
+            {
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        Debug.WriteLine("- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
+                            ve.PropertyName,
+                            eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
+                            ve.ErrorMessage);
+                    }
+                }
+                throw;
+            }
             return this.Ok(group.Id);
         }
 
@@ -64,7 +85,7 @@
             }
 
             group.Users.Add(user);
-            this.Data.Groups.SaveChanges();
+            this.Data.SaveChanges();
 
             return this.Ok();        
         }
@@ -86,7 +107,7 @@
             }
 
             group.Users.Remove(user);
-            this.Data.Groups.SaveChanges();
+            this.Data.SaveChanges();
 
             return this.Ok();   
         }
@@ -129,7 +150,7 @@
             group.Users.Add(currentUser);
             group.Users.Add(friend);
             this.Data.Groups.Add(group);
-            this.Data.Groups.SaveChanges();
+            this.Data.SaveChanges();
 
             return Ok();
         }

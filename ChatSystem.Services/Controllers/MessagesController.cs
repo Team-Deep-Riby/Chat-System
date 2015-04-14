@@ -15,8 +15,7 @@
     [RoutePrefix("api/Messages")]
     public class MessagesController : BaseApiController
     {
-      
-        public MessagesController(IChatSystemData data) : base(data)
+        public MessagesController() : base()
         {
         }
 
