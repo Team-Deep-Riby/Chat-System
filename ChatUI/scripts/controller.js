@@ -1,7 +1,7 @@
 var app = app || {};
 
 app.controller = (function () {
-    var baseUrl = '/ChatUI/#/';
+    var baseUrl = '/#/';
 
     function Controller(data, views) {
         this._data = data;
@@ -15,16 +15,16 @@ app.controller = (function () {
 
         this._router = Sammy(function () {
             this.get('#/', function () {
-                if(sessionStorage['st']){
+                if (sessionStorage['st']) {
                     _this._views.showUserPage(sessionStorage);
                     loadFriendsOrGroups.call(_this, 'friends');
                 } else {
                     _this._views.showHomePage();
                 }
-              });
+            });
 
             this.get('#/user', function () {
-                if(sessionStorage['st']){
+                if (sessionStorage['st']) {
                     _this._views.showUserPage(sessionStorage);
                     loadFriendsOrGroups.call(_this, 'friends');
                 } else {
@@ -66,6 +66,26 @@ app.controller = (function () {
         $('#main').on('click', '#groups', function (e) {
             loadFriendsOrGroups.call(_this, 'groups');
         });
+
+        $('#main').on('click', '#add-friend', function (e) {
+            _this._views.showAddFriendForm();
+        });
+
+        $('#main').on('click', '#create-group', function (e) {
+            _this._views.showCreateGroupForm();
+        });
+
+        $('#main').on('click', '#add-friend-button', function (e) {
+            addFriend.call(_this);
+        });
+
+        $('#main').on('click', '#create-group-button', function (e) {
+            createGroup.call(_this);
+        });
+
+        $('#main').on('click', '#friends-and-groups', function (ev) {
+            changeReciver.call(_this, ev);
+        });
     };
 
     function getUserDataOfRegisterForm(e) {
@@ -99,10 +119,10 @@ app.controller = (function () {
         return user;
     }
 
-    function getMessageError(error){
+    function getMessageError(error) {
         var message = error.responseJSON.Message || error.responseJSON.error + "<br>";
         modelState = error.responseJSON.ModelState;
-        for(key in modelState){
+        for (key in modelState) {
             message += modelState[key].join("<br>") + "<br>";
         }
 
@@ -118,7 +138,7 @@ app.controller = (function () {
                     .then(function (user) {
                         user['access_token'] = userInfo.access_token;
                         _this._data.users.makeSession(user);
-                       _this._router.setLocation(baseUrl + "user");
+                        _this._router.setLocation(baseUrl + "user");
                     }, function (error) {
                         var message = getMessageError(data);
                         boxMessage.error('Error: ' + message);
@@ -156,42 +176,91 @@ app.controller = (function () {
     }
 
     function loadFriendsOrGroups(itemType) {
+        var _this = this;
+        var user = _this._data.users.getLoginUserData();
+        if (itemType == 'friends') {
+            _this._data.friends.get(user.sessionToken)
+                .then(function (items) {
+                    $('#friends').addClass('active');
+                    $('#groups').removeClass('active');
+                    $('#add-friend-in-group').hide();
 
+                    var data = {
+                        items: items,
+                        hasMessages: function () {
+                            return function (text, render) {
+                                var count = Number(render(text));
+                                if (count > 0) {
+                                    return count.toString();
+                                }
 
-        if(itemType == 'friends'){
-            $('#friends').addClass('active');
-            $('#groups').removeClass('active');
-            var items = [
-                {name: "Gosho", groupId: 5, countOfUnrecivedMessages: 0},
-                {name: "Pesho", groupId: 6, countOfUnrecivedMessages: 6},
-                {name: "Mimi", groupId: 7, countOfUnrecivedMessages: 5},
-            ];
-        } else {
-            $('#groups').addClass('active');
-            $('#friends').removeClass('active');
-            var items = [
-                {name: "Team", groupId: 5, countOfUnrecivedMessages: 0},
-                {name: "Pesho, Mimi and Gosho", groupId: 6, countOfUnrecivedMessages: 0},
-                {name: "Mimi's team", groupId: 7, countOfUnrecivedMessages: 2},
-            ];
+                                return "";
+                            }
+                        }
+                    };
+
+                    _this._views.showFriendsOrGroups(data);
+                });
         }
+        else {
+            _this._data.groups.get(user.sessionToken)
+                .then(function (items) {
+                    $('#groups').addClass('active');
+                    $('#friends').removeClass('active');
+                    $('#add-friend-in-group').show();
 
+                    var data = {
+                        items: items,
+                        hasMessages: function () {
+                            return function (text, render) {
+                                var count = Number(render(text));
+                                if (count > 0) {
+                                    return count.toString();
+                                }
 
-        var data = {
-            items: items,
-            hasMessages: function () {
-                return function (text, render) {
-                    var count = Number(render(text));
-                    if(count > 0){
-                        return count.toString();
-                    }
+                                return "";
+                            }
+                        }
+                    };
 
-                    return "";
-                }
-            }
-        };
+                    _this._views.showFriendsOrGroups(data);
+                }, function (error) {
+                    var message = getMessageError(data);
+                    boxMessage.error('Error: ' + message);
+                });
+        }
+    }
 
-        this._views.showFriends(data);
+    function addFriend(username) {
+        var _this = this;
+        var username = $('#modal-content #inputUsername').val();
+        var user = _this._data.users.getLoginUserData();
+        _this._data.friends.addUser(username, user.sessionToken)
+            .then(function () {
+                loadFriendsOrGroups.call(_this, 'friends');
+            }, function (data) {
+                boxMessage.error('Error: ' + data.responseText);
+            });
+    }
+
+    function createGroup() {
+        var _this = this;
+        var groupName = $('#modal-content #inputGroupName').val();
+        var user = _this._data.users.getLoginUserData();
+        _this._data.groups.createNewGroup(groupName, user.sessionToken)
+            .then(function () {
+                loadFriendsOrGroups.call(_this, 'groups');
+            }, function (data) {
+                boxMessage.error('Error: ' + data.responseText);
+            });
+    }
+
+    function changeReciver(ev) {
+        var $target = $(ev.target);
+        var reciverName = $target.text();
+        var reciverId = $target.parent().attr('id');
+        var $reciver = $('#reciver-name').text(reciverName);
+        $reciver.attr('data-group-id', reciverId);
     }
 
     return {

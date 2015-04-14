@@ -23,13 +23,15 @@
         {
             var currentUserId = User.Identity.GetUserId();
 
-            var groups = this.Data.Groups.All().Where(g => g.Name != "Friends" && g.Users.Any(u => u.Id == currentUserId))
-                .Select(g => new GroupFullModel
-                {
-                    GroupId = g.Id, 
-                    Name = g.Name,
-                    UnreceivedMessages = g.UnreceivedMessages
-                });
+            var groups =
+                this.Data.Groups.All().Where(g => g.Name != "Friends" && g.Users.Any(u => u.Id == currentUserId))
+                    .Select(g => new GroupFullModel
+                    {
+                        GroupId = g.Id,
+                        Name = g.Name,
+                        UnreceivedMessages = g.UnreceivedMessages
+                    })
+                    .ToList();
 
            return Ok(groups);
         }
@@ -39,8 +41,12 @@
         public IHttpActionResult CreateNewGroup([FromBody]GroupViewModel groupModel)
         {
             var group = new ChatGroup { Name = groupModel.GroupName };
+
+            var currentUserId = User.Identity.GetUserId();
+            var user = this.Data.Users.All().FirstOrDefault(u => u.Id == currentUserId);
+            group.Users.Add(user);
             this.Data.Groups.Add(group);
-            
+
             try
             {
                 this.Data.SaveChanges();

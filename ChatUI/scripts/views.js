@@ -17,7 +17,7 @@ app.views = (function () {
             .done();
     }
 
-    function showFriends(sessionData) {
+    function showFriendsOrGroups(sessionData) {
         loadTemplate('friends-and-groups')
             .then(function (template) {
                 mustacheRender(template, sessionData, '#friends-and-groups');
@@ -37,6 +37,22 @@ app.views = (function () {
         loadTemplate('register-form')
             .then(function (tamplate) {
                 mustacheRender(tamplate, null, '#main');
+            })
+            .done();
+    }
+
+    function showAddFriendForm(){
+        loadTemplate('add-friend-form')
+            .then(function(template){
+                mustacheRender(template, null, '#modal-content')
+            })
+            .done();
+    }
+
+    function showCreateGroupForm(){
+        loadTemplate('create-group-form')
+            .then(function(template){
+                mustacheRender(template, null, '#modal-content')
             })
             .done();
     }
@@ -61,6 +77,8 @@ app.views = (function () {
         showLoginForm: showLoginForm,
         showRegisterForm: showRegisterForm,
         showUserPage: showUserPage,
-        showFriends: showFriends
+        showFriendsOrGroups: showFriendsOrGroups,
+        showAddFriendForm: showAddFriendForm,
+        showCreateGroupForm: showCreateGroupForm
     };
 })();

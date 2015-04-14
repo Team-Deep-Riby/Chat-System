@@ -281,7 +281,7 @@ var array_map = uncurryThis(
     }
 );
 
-var object_create = Object.create || function (prototype) {
+var object_create = Object.createNewGroup || function (prototype) {
     function Type() { }
     Type.prototype = prototype;
     return new Type();
