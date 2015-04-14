@@ -5,8 +5,8 @@ using System.Web;
 
 namespace ChatSystem.Services.Models
 {
-    public class GroupViewModel
+    public class GroupIdViewModel
     {
-        public string GroupName { get; set; }
+        public int GroupId { get; set; }
     }
 }

@@ -29,10 +29,10 @@
             var user = this.Data.Users.All().Where(u => u.Id == currentUserId).FirstOrDefault();
 
             var groups = this.Data.Groups.All().Where(g => g.Users.Count > 2 && g.Users.Contains(user))
-                .Select(g => new GroupViewModel
+                .Select(g => new
                 {
                     GroupId = g.Id, 
-                    Name = g.Name,
+                    GroupName = g.Name,
                     UnreceivedMessages = g.UnreceivedMessages
                 });
             return Ok(groups);
@@ -40,9 +40,9 @@
 
         [HttpPost]
         [Route("create")]
-        public IHttpActionResult CreateNewGroup([FromBody]string groupName)
+        public IHttpActionResult CreateNewGroup([FromBody]GroupViewModel groupModel)
         {
-            var group = new ChatGroup { Name = groupName };
+            var group = new ChatGroup { Name = groupModel.GroupName };
             this.Data.Groups.Add(group);
             
             try
@@ -70,9 +70,9 @@
 
         [HttpPost]
         [Route("add/{userId}")]
-        public IHttpActionResult AddUserToGroup(string userId,[FromBody]int groupId)
+        public IHttpActionResult AddUserToGroup(string userId, [FromBody]GroupIdViewModel groupModel)
         {
-            var group = this.Data.Groups.All().Where(g => g.Id == groupId).FirstOrDefault();
+            var group = this.Data.Groups.All().Where(g => g.Id == groupModel.GroupId).FirstOrDefault();
             if(group == null)
             {
                 return CustomResult(HttpStatusCode.NotFound, "Group not found");
@@ -92,9 +92,9 @@
 
         [HttpDelete]
         [Route("remove/{userId}")]
-        public IHttpActionResult RemoveUserFromGroup(string userId, int groupId)
+        public IHttpActionResult RemoveUserFromGroup(string userId,[FromBody]GroupIdViewModel groupModel)
         {
-            var group = this.Data.Groups.All().Where(g => g.Id == groupId).FirstOrDefault();
+            var group = this.Data.Groups.All().Where(g => g.Id == groupModel.GroupId).FirstOrDefault();
             if (group == null)
             {
                 return CustomResult(HttpStatusCode.NotFound, "Group not found");
