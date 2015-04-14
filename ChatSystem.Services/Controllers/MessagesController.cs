@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
-using Microsoft.AspNet.Identity;
-
-namespace ChatSystem.Services.Controllers
+﻿namespace ChatSystem.Services.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Web;
+    using System.Web.Http;
+
+    using Microsoft.AspNet.Identity;
+
     using ChatSystem.Models;
     using ChatSystem.Data;
     using Services.Models;
@@ -17,9 +17,9 @@ namespace ChatSystem.Services.Controllers
     {
         private readonly IChatSystemData data;
 
-        public MessagesController()
+        public MessagesController(IChatSystemData data)
         {
-            this.data = new ChatSystemData(new ApplicationDbContext());
+            this.data = data;
         }
 
         // GET api/Messages/groupId

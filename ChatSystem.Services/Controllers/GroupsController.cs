@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using Microsoft.AspNet.Identity;
-
-namespace ChatSystem.Services.Controllers
+﻿namespace ChatSystem.Services.Controllers
 {
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Web.Http;
+
+    using Microsoft.AspNet.Identity;
     using ChatSystem.Data;
     using ChatSystem.Models;
     using Services.Models;
+
     [Authorize]
     [RoutePrefix("api/Groups")]
     public class GroupsController : ApiController
     {
         private readonly IChatSystemData data;
 
-        public GroupsController()
+        public GroupsController(IChatSystemData data)
         {
-            this.data = new ChatSystemData(new ApplicationDbContext());
+            this.data = data;
         }
 
         [HttpGet]
