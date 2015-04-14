@@ -86,6 +86,10 @@ app.controller = (function () {
         $('#main').on('click', '#friends-and-groups', function (ev) {
             changeReciver.call(_this, ev);
         });
+
+        $('#main').on('click', '#sent-button', function (ev) {
+            sentMessage.call(_this, ev);
+        });
     };
 
     function getUserDataOfRegisterForm(e) {
@@ -251,6 +255,7 @@ app.controller = (function () {
             .then(function () {
                 loadFriendsOrGroups.call(_this, 'groups');
             }, function (data) {
+
                 boxMessage.error('Error: ' + data.responseText);
             });
     }
@@ -261,6 +266,32 @@ app.controller = (function () {
         var reciverId = $target.parent().attr('id');
         var $reciver = $('#reciver-name').text(reciverName);
         $reciver.attr('data-group-id', reciverId);
+    }
+
+    function sentMessage(ev){
+        var  _this = this;
+        var content = $('#inputMessage').val();
+        var user = _this._data.users.getLoginUserData();
+        var groupId = $('#reciver-name').attr('data-group-id');
+        _this._data.messages.send(user.sessionToken, groupId, content)
+            .then(function (data) {
+                refreshMessagesWindow(user.sessionToken, groupId);
+            }, function (data) {
+                var message = getMessageError(data);
+                boxMessage.error('Error: ' + message);
+            });
+    }
+
+    function refreshMessagesWindow(accessToken, groupId){
+       var  _this  = this;
+        _this._data.messages.get(accessToken, groupId)
+            .then(function (messages) {
+                var data = {messages : messages};
+                _this._views.showMessages(data);
+            }, function (data) {
+                var message = getMessageError(data);
+                console.error('Error: ' + message);
+            });
     }
 
     return {

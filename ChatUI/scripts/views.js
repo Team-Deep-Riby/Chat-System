@@ -57,6 +57,14 @@ app.views = (function () {
             .done();
     }
 
+    function showMessages(data){
+        loadTemplate('messages')
+            .then(function(template){
+                mustacheRender(template, data, '#messages')
+            })
+            .done();
+    }
+
     function loadTemplate(name) {
         var defer = Q.defer();
         $.get('./templates/' + name + '.html', function (template) {
@@ -79,6 +87,7 @@ app.views = (function () {
         showUserPage: showUserPage,
         showFriendsOrGroups: showFriendsOrGroups,
         showAddFriendForm: showAddFriendForm,
-        showCreateGroupForm: showCreateGroupForm
+        showCreateGroupForm: showCreateGroupForm,
+        showMessages: showMessages
     };
 })();

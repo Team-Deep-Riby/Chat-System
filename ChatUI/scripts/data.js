@@ -31,6 +31,7 @@ app.data = (function () {
     };
 
     function Data() {
+        this.messages = new Message(serviceData);
         this.friends = new Friend(serviceData);
         this.groups = new Group(serviceData);
         this.users = new User(serviceUser);
@@ -140,6 +141,27 @@ app.data = (function () {
         };
 
         return Group;
+    })();
+
+    var Message = (function () {
+        function Message(service) {
+            Table.call(this, service, 'Messages');
+        }
+
+        Message.prototype = Object.create(Table.prototype);
+        Message.prototype.constructor = Message;
+
+        Message.prototype.send = function(accessToken, groupId, content){
+            this.addHeader("Authorization", "bearer " + accessToken);
+            var message = {
+                groupId: groupId,
+                content: content
+            };
+
+            return requester.post(this._dataUrl + '/sent', 'application/json', this._service.headers, message);
+        }
+
+        return Message;
     })();
 
     return {
