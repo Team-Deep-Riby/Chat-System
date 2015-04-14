@@ -7,7 +7,7 @@ namespace ChatSystem.Services.Models
 {
     public class FriendViewModel
     {
-        public string FriendName { get; set; }
+        public string Name { get; set; }
 
         public int GroupId { get; set; }
 

@@ -17,10 +17,6 @@
     public class GroupsController : BaseApiController
     {
 
-        public GroupsController() : base()
-        {
-        }
-
         [HttpGet]
         [Route]
         public IHttpActionResult GetAllGroups()
@@ -31,7 +27,7 @@
                 .Select(g => new GroupFullModel
                 {
                     GroupId = g.Id, 
-                    GroupName = g.Name,
+                    Name = g.Name,
                     UnreceivedMessages = g.UnreceivedMessages
                 });
 
@@ -122,7 +118,7 @@
                                 where g.Users.Count() == 2 && g.Users.Where(u => u.Id == currentUserId).Any()
                                 select new FriendViewModel
                                 {
-                                    FriendName = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
+                                    Name = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
                                     GroupId = g.Id,
                                     UnreceivedMessages = g.UnreceivedMessages
                                 };

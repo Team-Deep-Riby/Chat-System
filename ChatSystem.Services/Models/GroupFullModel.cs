@@ -2,7 +2,7 @@
 {
     public class GroupFullModel
     {
-        public string GroupName { get; set; }
+        public string Name { get; set; }
 
         public int GroupId { get; set; }
 
