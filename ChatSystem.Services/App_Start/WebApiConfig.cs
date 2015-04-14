@@ -4,8 +4,6 @@
 
     using Microsoft.Owin.Security.OAuth;
 
-    using Ninject.Web.WebApi;
-
     public static class WebApiConfig
     {
         public static void Register(HttpConfiguration config)
