@@ -7,7 +7,7 @@ namespace ChatSystem.Services.Models
 {
     public class GroupViewModel
     {
-        public string GroupName { get; set; }
+        public string Name { get; set; }
 
         public int GroupId { get; set; }
 
