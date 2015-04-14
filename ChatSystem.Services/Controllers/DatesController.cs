@@ -12,13 +12,12 @@
 
     [Authorize]
     [RoutePrefix("api/Dates")]
-    public class DatesController : ApiController
+    public class DatesController : BaseApiController
     {
-        private readonly IChatSystemData data;
 
         public DatesController(IChatSystemData data)
+            : base(data)
         {
-            this.data = data;
         }
 
         [HttpGet]
@@ -26,7 +25,7 @@
         public IHttpActionResult GetDatesByGroup(int groupId)
         {
             var currentUserId = User.Identity.GetUserId();
-            var messageDates = from m in data.Messages.All()
+            var messageDates = from m in this.Data.Messages.All()
                                where m.SenderId == currentUserId && m.GroupId == groupId
                                orderby m.DateTime
                                select m.DateTime;

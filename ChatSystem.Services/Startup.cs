@@ -19,23 +19,21 @@ namespace ChatSystem.Services
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
-
-            app.UseNinjectMiddleware(CreateKernel).UseNinjectWebApi(GlobalConfiguration.Configuration);
         }
 
-        private static StandardKernel CreateKernel()
-        {
-            var kernel = new StandardKernel();
-            kernel.Load(Assembly.GetExecutingAssembly());
+        //private static StandardKernel CreateKernel()
+        //{
+        //    var kernel = new StandardKernel();
+        //    kernel.Load(Assembly.GetExecutingAssembly());
 
-            BindTypes(kernel);
+        //    BindTypes(kernel);
 
-            return kernel;
-        }
+        //    return kernel;
+        //}
 
-        private static void BindTypes(StandardKernel kernel)
-        {
-            kernel.Bind<IChatSystemData>().To<ChatSystemData>().WithConstructorArgument("context", c => new ApplicationDbContext());
-        }
+        //private static void BindTypes(StandardKernel kernel)
+        //{
+        //    kernel.Bind<IChatSystemData>().To<ChatSystemData>().WithConstructorArgument("context", c => new ApplicationDbContext());
+        //}
     }
 }

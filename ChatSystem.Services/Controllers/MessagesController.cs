@@ -13,13 +13,11 @@
 
     [Authorize]
     [RoutePrefix("api/Messages")]
-    public class MessagesController : ApiController
+    public class MessagesController : BaseApiController
     {
-        private readonly IChatSystemData data;
-
-        public MessagesController(IChatSystemData data)
+      
+        public MessagesController(IChatSystemData data) : base(data)
         {
-            this.data = data;
         }
 
         // GET api/Messages/groupId
@@ -27,7 +25,7 @@
         [Route("{groupId:int}")]
         public IHttpActionResult GetMessagesByGroupId(int groupId)
         {
-            var messages = from m in data.Messages.All() where m.GroupId == groupId
+            var messages = from m in this.Data.Messages.All() where m.GroupId == groupId
                            select new MessageViewModel
                            {
                                 senderId = m.SenderId,
@@ -43,7 +41,7 @@
         [Route("unreceived/{groupId:int}")]
         public IHttpActionResult GetMessagesByGroupIdUnreceived(int groupId)
         {
-            var messages = from m in data.Messages.All() 
+            var messages = from m in this.Data.Messages.All() 
                            where m.GroupId == groupId && m.Recievers.Count() == 0
                            select new MessageViewModel
                            {
@@ -60,7 +58,7 @@
         [Route("{groupId:int}/{datetime:datetime}")]
         public IHttpActionResult GetMessagesByGroupIdAndDate(int groupId,DateTime datetime)
         {
-            var messages = from m in data.Messages.All()
+            var messages = from m in this.Data.Messages.All()
                            where m.GroupId == groupId && m.DateTime == datetime
                            select new MessageViewModel
                            {
