@@ -26,16 +26,16 @@
         public IHttpActionResult GetAllGroups()
         {
             var currentUserId = User.Identity.GetUserId();
-            var user = this.Data.Users.All().Where(u => u.Id == currentUserId).FirstOrDefault();
 
-            var groups = this.Data.Groups.All().Where(g => g.Users.Count > 2 && g.Users.Contains(user))
-                .Select(g => new
+            var groups = this.Data.Groups.All().Where(g => g.Users.Count > 2 && g.Users.Any(u => u.Id == currentUserId))
+                .Select(g => new GroupFullModel
                 {
                     GroupId = g.Id, 
                     GroupName = g.Name,
                     UnreceivedMessages = g.UnreceivedMessages
                 });
-            return Ok(groups);
+
+           return Ok(groups);
         }
 
         [HttpPost]
