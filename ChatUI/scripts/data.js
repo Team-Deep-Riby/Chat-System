@@ -22,12 +22,14 @@ app.data = (function () {
 
     var serviceData = {
         headers: headers,
-        url: 'http://localhost:39959/api/'
+        //url: 'http://localhost:39959/api/'
+        url :'http://team-deep-ruby.azurewebsites.net/api/'
     };
 
     var serviceUser = {
         headers: headers,
-        url: 'http://localhost:39959/'
+        //url: 'http://localhost:39959/'
+        url: 'http://team-deep-ruby.azurewebsites.net/'
     };
 
     function Data() {
