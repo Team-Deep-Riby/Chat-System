@@ -266,33 +266,6 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Views\client\bootstrap\css\bootstrap-theame2.min.css" />
-    <Content Include="Views\client\bootstrap\css\bootstrap-theme.css" />
-    <Content Include="Views\client\bootstrap\css\bootstrap-theme.min.css" />
-    <Content Include="Views\client\bootstrap\css\bootstrap.css" />
-    <Content Include="Views\client\bootstrap\css\bootstrap.min.css" />
-    <Content Include="Views\client\bootstrap\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Views\client\bootstrap\js\bootstrap.js" />
-    <Content Include="Views\client\bootstrap\js\bootstrap.min.js" />
-    <Content Include="Views\client\bootstrap\js\npm.js" />
-    <Content Include="Views\client\css\styles.css" />
-    <Content Include="Views\client\index.html" />
-    <Content Include="Views\client\libs\jquery-2.1.1.min.js" />
-    <Content Include="Views\client\libs\jquery.noty.packaged.min.js" />
-    <Content Include="Views\client\libs\mustache.js" />
-    <Content Include="Views\client\libs\q.js" />
-    <Content Include="Views\client\libs\sammy.js" />
-    <Content Include="Views\client\scripts\box-message.js" />
-    <Content Include="Views\client\scripts\controller.js" />
-    <Content Include="Views\client\scripts\data.js" />
-    <Content Include="Views\client\scripts\main.js" />
-    <Content Include="Views\client\scripts\requester.js" />
-    <Content Include="Views\client\scripts\views.js" />
-    <Content Include="Views\client\templates\friends-and-groups.html" />
-    <Content Include="Views\client\templates\home-page.html" />
-    <Content Include="Views\client\templates\login-form.html" />
-    <Content Include="Views\client\templates\register-form.html" />
-    <Content Include="Views\client\templates\user-page.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -309,12 +282,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\client\bootstrap\css\bootstrap-theme.css.map" />
-    <Content Include="Views\client\bootstrap\css\bootstrap.css.map" />
-    <Content Include="Views\client\bootstrap\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Views\client\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Views\client\bootstrap\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Views\client\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
