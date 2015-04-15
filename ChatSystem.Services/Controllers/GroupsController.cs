@@ -126,6 +126,7 @@
                                 {
                                     Name = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
                                     GroupId = g.Id,
+                                    UserId = g.Users.Where(u => u.Id != currentUserId).Select(u => u.Id).FirstOrDefault(),
                                     UnreceivedMessages = g.UnreceivedMessages
                                 };
 
@@ -133,10 +134,10 @@
         }
 
         [HttpPost]
-        [Route("~/api/Friends/add/{userId}")]
-        public IHttpActionResult CreateNewFriendGroup(string userId)
+        [Route("~/api/Friends/add/{userName}")]
+        public IHttpActionResult CreateNewFriendGroup(string userName)
         {
-            var friend = this.Data.Users.All().Where(u => u.Id == userId).FirstOrDefault();
+            var friend = this.Data.Users.All().Where(u => u.UserName == userName).FirstOrDefault();
             if (friend == null)
             {
                 return CustomResult(HttpStatusCode.NotFound, "User not found");

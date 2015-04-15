@@ -11,6 +11,8 @@ namespace ChatSystem.Services.Models
 
         public int GroupId { get; set; }
 
+        public string  UserId { get; set; }
+
         public int UnreceivedMessages { get; set; }
     }
 }
