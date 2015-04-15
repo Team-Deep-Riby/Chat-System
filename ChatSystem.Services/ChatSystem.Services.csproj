@@ -276,33 +276,6 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="UI\bootstrap\css\bootstrap-theame2.min.css" />
-    <Content Include="UI\bootstrap\css\bootstrap-theme.css" />
-    <Content Include="UI\bootstrap\css\bootstrap-theme.min.css" />
-    <Content Include="UI\bootstrap\css\bootstrap.css" />
-    <Content Include="UI\bootstrap\css\bootstrap.min.css" />
-    <Content Include="UI\bootstrap\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="UI\bootstrap\js\bootstrap.js" />
-    <Content Include="UI\bootstrap\js\bootstrap.min.js" />
-    <Content Include="UI\bootstrap\js\npm.js" />
-    <Content Include="UI\css\styles.css" />
-    <Content Include="UI\index.html" />
-    <Content Include="UI\libs\jquery-2.1.1.min.js" />
-    <Content Include="UI\libs\jquery.noty.packaged.min.js" />
-    <Content Include="UI\libs\mustache.js" />
-    <Content Include="UI\libs\q.js" />
-    <Content Include="UI\libs\sammy.js" />
-    <Content Include="UI\scripts\box-message.js" />
-    <Content Include="UI\scripts\controller.js" />
-    <Content Include="UI\scripts\data.js" />
-    <Content Include="UI\scripts\main.js" />
-    <Content Include="UI\scripts\requester.js" />
-    <Content Include="UI\scripts\views.js" />
-    <Content Include="UI\templates\friends-and-groups.html" />
-    <Content Include="UI\templates\home-page.html" />
-    <Content Include="UI\templates\login-form.html" />
-    <Content Include="UI\templates\register-form.html" />
-    <Content Include="UI\templates\user-page.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -319,12 +292,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="UI\bootstrap\css\bootstrap-theme.css.map" />
-    <Content Include="UI\bootstrap\css\bootstrap.css.map" />
-    <Content Include="UI\bootstrap\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="UI\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="UI\bootstrap\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="UI\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
