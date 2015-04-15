@@ -9,6 +9,7 @@ namespace ChatSystem.Services
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
 
         //private static StandardKernel CreateKernel()
