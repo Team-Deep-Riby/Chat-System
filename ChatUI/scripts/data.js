@@ -22,14 +22,14 @@ app.data = (function () {
 
     var serviceData = {
         headers: headers,
-        //url: 'http://localhost:39959/api/'
-        url :'http://team-deep-ruby.azurewebsites.net/api/'
+        url: 'http://localhost:39959/api/'
+        //url :'http://team-deep-ruby.azurewebsites.net/api/'
     };
 
     var serviceUser = {
         headers: headers,
-        //url: 'http://localhost:39959/'
-        url: 'http://team-deep-ruby.azurewebsites.net/'
+        url: 'http://localhost:39959/'
+        //url: 'http://team-deep-ruby.azurewebsites.net/'
     };
 
     function Data() {
@@ -142,6 +142,16 @@ app.data = (function () {
             return requester.post(this._dataUrl + '/create', 'application/json', this._service.headers, group);
         };
 
+        Group.prototype.addUsers = function (groupId, friendsIds, accessToken) {
+            var data = {
+                groupId: groupId, //todo  look service
+                friendsIds : friendsIds //todo look service
+            };
+
+            this.addHeader("Authorization", "bearer " + accessToken);
+            return requester.post(this._dataUrl + '/friends/add', 'application/json', this._service.headers, data);
+        };
+
         return Group;
     })();
 
@@ -160,8 +170,8 @@ app.data = (function () {
                 content: content
             };
 
-            return requester.post(this._dataUrl + '/sent', 'application/json', this._service.headers, message);
-        }
+            return requester.post(this._dataUrl + '/send', 'application/json', this._service.headers, message);
+        };
 
         return Message;
     })();

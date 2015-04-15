@@ -1,7 +1,7 @@
 var app = app || {};
 
 app.controller = (function () {
-    var baseUrl = '/#/';
+    var baseUrl = 'ChatUI/#/';
 
     function Controller(data, views) {
         this._data = data;
@@ -17,7 +17,7 @@ app.controller = (function () {
             this.get('#/', function () {
                 if (sessionStorage['st']) {
                     _this._views.showUserPage(sessionStorage);
-                    loadFriendsOrGroups.call(_this, 'friends');
+                    loadFriends.call(_this);
                 } else {
                     _this._views.showHomePage();
                 }
@@ -26,7 +26,7 @@ app.controller = (function () {
             this.get('#/user', function () {
                 if (sessionStorage['st']) {
                     _this._views.showUserPage(sessionStorage);
-                    loadFriendsOrGroups.call(_this, 'friends');
+                    loadFriends.call(_this);
                 } else {
                     this.setLocation(baseUrl);
                 }
@@ -60,11 +60,11 @@ app.controller = (function () {
         });
 
         $('#main').on('click', '#friends', function (e) {
-            loadFriendsOrGroups.call(_this, 'friends');
+            loadFriends.call(_this, 'friends');
         });
 
         $('#main').on('click', '#groups', function (e) {
-            loadFriendsOrGroups.call(_this, 'groups');
+            loadGroups.call(_this);
         });
 
         $('#main').on('click', '#add-friend', function (e) {
@@ -89,6 +89,14 @@ app.controller = (function () {
 
         $('#main').on('click', '#sent-button', function (ev) {
             sentMessage.call(_this, ev);
+        });
+
+        $('#main').on('click', '#add-friend-in-group', function (ev) {
+            loadFriendsCheckBoxList.call(_this);
+        });
+
+        $('#main').on('click', '#add-friends-in-group-button', function (ev) {
+            AddFriendsInGroup.call(_this);
         });
     };
 
@@ -179,69 +187,13 @@ app.controller = (function () {
         this._views.showHomePage();
     }
 
-    function loadFriendsOrGroups(itemType) {
-        var _this = this;
-        var user = _this._data.users.getLoginUserData();
-        if (itemType == 'friends') {
-            _this._data.friends.get(user.sessionToken)
-                .then(function (items) {
-                    $('#friends').addClass('active');
-                    $('#groups').removeClass('active');
-                    $('#add-friend-in-group').hide();
-
-                    var data = {
-                        items: items,
-                        hasMessages: function () {
-                            return function (text, render) {
-                                var count = Number(render(text));
-                                if (count > 0) {
-                                    return count.toString();
-                                }
-
-                                return "";
-                            }
-                        }
-                    };
-
-                    _this._views.showFriendsOrGroups(data);
-                });
-        }
-        else {
-            _this._data.groups.get(user.sessionToken)
-                .then(function (items) {
-                    $('#groups').addClass('active');
-                    $('#friends').removeClass('active');
-                    $('#add-friend-in-group').show();
-
-                    var data = {
-                        items: items,
-                        hasMessages: function () {
-                            return function (text, render) {
-                                var count = Number(render(text));
-                                if (count > 0) {
-                                    return count.toString();
-                                }
-
-                                return "";
-                            }
-                        }
-                    };
-
-                    _this._views.showFriendsOrGroups(data);
-                }, function (error) {
-                    var message = getMessageError(data);
-                    boxMessage.error('Error: ' + message);
-                });
-        }
-    }
-
     function addFriend(username) {
         var _this = this;
         var username = $('#modal-content #inputUsername').val();
         var user = _this._data.users.getLoginUserData();
         _this._data.friends.addUser(username, user.sessionToken)
             .then(function () {
-                loadFriendsOrGroups.call(_this, 'friends');
+                loadFriends.call(_this);
             }, function (data) {
                 boxMessage.error('Error: ' + data.responseText);
             });
@@ -253,7 +205,7 @@ app.controller = (function () {
         var user = _this._data.users.getLoginUserData();
         _this._data.groups.createNewGroup(groupName, user.sessionToken)
             .then(function () {
-                loadFriendsOrGroups.call(_this, 'groups');
+                loadGroups.call(_this);
             }, function (data) {
 
                 boxMessage.error('Error: ' + data.responseText);
@@ -266,31 +218,141 @@ app.controller = (function () {
         var reciverId = $target.parent().attr('id');
         var $reciver = $('#reciver-name').text(reciverName);
         $reciver.attr('data-group-id', reciverId);
+        $('#chat-window').removeClass('hide');
+
+        var user = this._data.users.getLoginUserData();
+        refreshMessagesWindow.call(this, user.sessionToken, reciverId);
     }
 
-    function sentMessage(ev){
-        var  _this = this;
+    function sentMessage(ev) {
+        var _this = this;
         var content = $('#inputMessage').val();
         var user = _this._data.users.getLoginUserData();
         var groupId = $('#reciver-name').attr('data-group-id');
         _this._data.messages.send(user.sessionToken, groupId, content)
             .then(function (data) {
-                refreshMessagesWindow(user.sessionToken, groupId);
+                $('#inputMessage').val('');
+                refreshMessagesWindow.call(_this, user.sessionToken, groupId);
             }, function (data) {
                 var message = getMessageError(data);
                 boxMessage.error('Error: ' + message);
             });
     }
 
-    function refreshMessagesWindow(accessToken, groupId){
-       var  _this  = this;
+    function loadFriendsCheckBoxList() {
+        var _this = this;
+        var user = _this._data.users.getLoginUserData();
+        _this._data.friends.get(user.sessionToken)
+            .then(function (friends) {
+                var data = {friends: friends};
+                _this._views.showFriendsCheckBoxList(data);
+            }, function (data) {
+                var message = getMessageError(data);
+                console.error('Error: ' + message);
+            });
+    }
+
+
+    function AddFriendsInGroup() {
+        //todo
+        var _this = this;
+        var friends = getFriendsOfCheckBoxList();
+        var groupId = $('#reciver-name').attr('data-group-id');
+        _this._data.groups.addUsers(groupId, friends.ids)
+            .then(function (){
+                _this._views.showFriendsInGroup(friends.names);
+            }, function () {
+                //todo
+                _this._views.showFriendsInGroup(friends.names);
+            });
+     }
+
+    function getFriendsOfCheckBoxList() {
+        var friends = {
+            ids: [],
+            names: []
+        };
+
+        var $checkBoxes = $('#modal-content input[type=checkbox]:checked');
+        $checkBoxes.each(function () {
+            var $user = $(this);
+            var userId = $user.attr('id');
+            var username = $user.attr('data-name');
+            friends.ids.push(userId);
+            friends.names.push(username);
+        });
+
+        return friends;
+    }
+
+    //Function for load on elements of page
+    function refreshMessagesWindow(accessToken, groupId) {
+        var _this = this;
         _this._data.messages.get(accessToken, groupId)
             .then(function (messages) {
-                var data = {messages : messages};
+                var data = {messages: messages.reverse()};
                 _this._views.showMessages(data);
             }, function (data) {
                 var message = getMessageError(data);
                 console.error('Error: ' + message);
+            });
+    }
+
+    function loadGroups() {
+        var _this = this;
+        var user = _this._data.users.getLoginUserData();
+        _this._data.groups.get(user.sessionToken)
+            .then(function (items) {
+                $('#groups').addClass('active');
+                $('#friends').removeClass('active');
+                $('#add-friend-in-group').show();
+
+                var data = {
+                    items: items,
+                    hasMessages: function () {
+                        return function (text, render) {
+                            var count = Number(render(text));
+                            if (count > 0) {
+                                return count.toString();
+                            }
+
+                            return "";
+                        }
+                    }
+                };
+
+                _this._views.showFriendsOrGroups(data);
+            }, function (error) {
+                var message = getMessageError(data);
+                boxMessage.error('Error: ' + message);
+            });
+    }
+
+
+    function loadFriends() {
+        var _this = this;
+        var user = _this._data.users.getLoginUserData();
+        _this._data.friends.get(user.sessionToken)
+            .then(function (items) {
+                $('#friends').addClass('active');
+                $('#groups').removeClass('active');
+                $('#add-friend-in-group').hide();
+
+                var data = {
+                    items: items,
+                    hasMessages: function () {
+                        return function (text, render) {
+                            var count = Number(render(text));
+                            if (count > 0) {
+                                return count.toString();
+                            }
+
+                            return "";
+                        }
+                    }
+                };
+
+                _this._views.showFriendsOrGroups(data);
             });
     }
 

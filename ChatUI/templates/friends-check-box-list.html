@@ -1,0 +1,18 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h4 class="modal-title">Add Friends in Group</h4>
+</div>
+<div class="modal-body">
+    <fieldset>
+        {{#friends}}
+        <div class="col-lg-9 col-lg-offset-2 checkbox">
+            <input type="checkbox" id="{{UserId}}" data-name="{{Name}}">
+            <label for="{{UserId}}">{{Name}}</label>
+        </div>
+        {{/friends}}
+    </fieldset>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <button id="add-friends-in-group-button" type="button" class="btn btn-primary" data-dismiss="modal">Add Friends</button>
+</div>

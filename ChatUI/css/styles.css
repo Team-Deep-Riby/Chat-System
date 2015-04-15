@@ -28,3 +28,13 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.username {
+    font-style: italic;
+    font-weight: bold;
+}
+
+textarea.form-control {
+   min-height: 2rem;
+    overflow: visible;
+}

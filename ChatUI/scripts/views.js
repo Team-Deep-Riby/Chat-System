@@ -65,6 +65,19 @@ app.views = (function () {
             .done();
     }
 
+    function showFriendsCheckBoxList(data){
+        loadTemplate('friends-check-box-list')
+            .then(function(template){
+                mustacheRender(template, data, '#modal-content')
+            })
+            .done();
+    }
+
+    function showFriendsInGroup(names){
+        var newText = $('#reciver-name').text() + ': ' + names.join(', ');
+        $('#reciver-name').text(newText);
+    }
+
     function loadTemplate(name) {
         var defer = Q.defer();
         $.get('./templates/' + name + '.html', function (template) {
@@ -88,6 +101,8 @@ app.views = (function () {
         showFriendsOrGroups: showFriendsOrGroups,
         showAddFriendForm: showAddFriendForm,
         showCreateGroupForm: showCreateGroupForm,
-        showMessages: showMessages
+        showMessages: showMessages,
+        showFriendsCheckBoxList: showFriendsCheckBoxList,
+        showFriendsInGroup: showFriendsInGroup
     };
 })();
