@@ -11,6 +11,7 @@
     using ChatSystem.Services.Models;
     using System.Data.Entity.Validation;
     using System.Diagnostics;
+    using System.Collections.Generic;
 
     [Authorize]
     [RoutePrefix("api/Groups")]
@@ -121,7 +122,7 @@
             var currentUserId = User.Identity.GetUserId();
 
             var friendsGroups = from g in this.Data.Groups.All()
-                                where g.Users.Count() == 2 && g.Users.Where(u => u.Id == currentUserId).Any()
+                                where g.Users.Count() == 2 && g.Users.Any(u => u.Id == currentUserId)
                                 select new FriendViewModel
                                 {
                                     Name = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
@@ -157,7 +158,66 @@
 
             return Ok();
         }
+        [HttpPost]
+        [Route("friends/add")]
+        public IHttpActionResult AddFriendsToGroup([FromBody]GroupFriendAddModel model)
+        {
+            var currentUserId = User.Identity.GetUserId();
+            var friendGroup = (from g in this.Data.Groups.All()
+                               where g.Users.Count() == 2 && g.Users.Any(u => u.Id == currentUserId)
+                               && g.Users.Any(u => u.Id == model.UserId)
+                               select g).FirstOrDefault();
 
+
+            if (friendGroup == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "Friend not found");
+            }
+
+            var group = this.Data.Groups.All().Where(g => g.Id == model.GroupId).FirstOrDefault();
+            if (group == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "Group not found");
+            }
+            var friend = friendGroup.Users.Where(u => u.Id == model.UserId).FirstOrDefault();
+
+            group.Users.Add(friend);
+            this.Data.SaveChanges();
+
+            return this.Ok();
+        }
+
+        [HttpGet]
+        [Route("friends/{groupId}")]
+        public IHttpActionResult GetFriendsInGroup(int groupId)
+        {
+            var currentUserId = User.Identity.GetUserId();
+            var group = this.Data.Groups.All().Where(g => g.Id == groupId).FirstOrDefault();
+            if (group == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "Group not found");
+            }
+          
+            var allFriends = from g in this.Data.Groups.All()
+                                where g.Users.Count() == 2 && g.Users.Any(u => u.Id == currentUserId)
+                                select new GroupFriendViewModel
+                                {
+                                    UserName = g.Users.Where(u => u.Id != currentUserId).Select(u => u.UserName).FirstOrDefault(),
+                                    UserId = g.Users.Where(u => u.Id != currentUserId).Select(u => u.Id).FirstOrDefault()
+                                };
+
+            HashSet<GroupFriendViewModel> friendsInGroup = new HashSet<GroupFriendViewModel>();
+
+            foreach(var user in group.Users)
+            {
+                if(allFriends.Any(u => u.UserId == user.Id))
+                {
+                    friendsInGroup.Add(new GroupFriendViewModel { UserId = user.Id, UserName = user.UserName});
+                }
+            }
+            return Ok(friendsInGroup);
+
+        }
         private IHttpActionResult CustomResult(HttpStatusCode code,string message)
         {
              HttpResponseMessage responseMsg = new HttpResponseMessage(code);

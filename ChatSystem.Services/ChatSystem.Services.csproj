@@ -227,6 +227,8 @@
     <Compile Include="ServicesModels\AccountBindingModels.cs" />
     <Compile Include="ServicesModels\AccountViewModels.cs" />
     <Compile Include="ServicesModels\FriendViewModel.cs" />
+	<Compile Include="ServicesModels\GroupFriendAddModel.cs" />
+    <Compile Include="ServicesModels\GroupFriendViewModel.cs" />
     <Compile Include="ServicesModels\GroupFullModel.cs" />
     <Compile Include="ServicesModels\GroupIdViewModel.cs" />
     <Compile Include="ServicesModels\GroupViewModel.cs" />
