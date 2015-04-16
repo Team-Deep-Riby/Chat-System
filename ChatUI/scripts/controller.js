@@ -100,6 +100,10 @@ app.controller = (function () {
         });
     };
 
+    Controller.prototype.refreshInfo = function(){
+        refreshMessagesWindow.call(this)
+    };
+
     function getUserDataOfRegisterForm(e) {
         var $form = $(e.target).parent().parent().parents();
         var email = $form.find('#inputEmail').val();
@@ -248,7 +252,7 @@ app.controller = (function () {
         _this._data.messages.send(user.sessionToken, groupId, content)
             .then(function (data) {
                 $('#inputMessage').val('');
-                refreshMessagesWindow.call(_this, user.sessionToken, groupId);
+                refreshMessagesWindow.call(_this);
             }, function (data) {
                 var message = getMessageError(data);
                 boxMessage.error('Error: ' + message);
@@ -308,9 +312,12 @@ app.controller = (function () {
     }
 
     //Function for load on elements of page
-    function refreshMessagesWindow(accessToken, groupId) {
+    function refreshMessagesWindow() {
         var _this = this;
-        _this._data.messages.get(accessToken, groupId)
+        var user = _this._data.users.getLoginUserData();
+        var groupId = $('#reciver-name #name').attr('data-group-id');
+        var _this = this;
+        _this._data.messages.get(user.sessionToken, groupId)
             .then(function (messages) {
                 var data = {messages: messages.reverse()};
                 _this._views.showMessages(data);
@@ -377,6 +384,7 @@ app.controller = (function () {
                 _this._views.showFriendsOrGroups(data);
             });
     }
+
 
     return {
         get: function (data, views) {
