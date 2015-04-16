@@ -1,7 +1,7 @@
 var app = app || {};
 
 app.controller = (function () {
-    var baseUrl = 'ChatUI/#/';
+    var baseUrl = '#/';
 
     function Controller(data, views) {
         this._data = data;
