@@ -78,19 +78,26 @@
         public IHttpActionResult SendMessageToGroup([FromBody]MessagePostModel msg)
         {
             var userId = User.Identity.GetUserId();
+            var user = this.Data.Users.All().Where(u => u.Id == userId).FirstOrDefault();
+            if (user == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "User not found");
+            }
             var group = this.Data.Groups.All().Where(g => g.Id == msg.GroupId).FirstOrDefault();
             if (group == null)
             {
                 return CustomResult(HttpStatusCode.NotFound, "Group not found");
             }
+            
             var message = new Message
             {
                 Content = msg.Content,
-                DateTime = DateTime.Now,
-                GroupId = group.Id,
-                SenderId = userId
+                DateTime = DateTime.Now
             };
-        
+
+            group.Messages.Add(message);
+            user.Messages.Add(message);
+
             this.Data.Messages.Add(message);
             this.Data.SaveChanges();
 

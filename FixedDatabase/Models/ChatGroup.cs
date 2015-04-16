@@ -7,10 +7,12 @@
     public class ChatGroup
     {
         private ICollection<User> users;
+        private ICollection<Message> messages;
 
         public ChatGroup()
         {
             this.users = new HashSet<User>();
+            this.messages = new HashSet<Message>();
         }
 
         public int Id { get; set; }
@@ -24,6 +26,11 @@
         public virtual ICollection<User> Users
         {
             get { return users; }
+        }
+
+        public virtual ICollection<Message> Messages
+        {
+            get { return messages; }
         }
     }
 }
