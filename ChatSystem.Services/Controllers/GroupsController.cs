@@ -162,29 +162,22 @@
         [Route("friends/add")]
         public IHttpActionResult AddFriendsToGroup([FromBody]GroupFriendAddModel model)
         {
-            var currentUserId = User.Identity.GetUserId();
-            var friendGroup = (from g in this.Data.Groups.All()
-                               where g.Users.Count() == 2 && g.Users.Any(u => u.Id == currentUserId)
-                               && g.Users.Any(u => u.Id == model.UserId)
-                               select g).FirstOrDefault();
-
-
-            if (friendGroup == null)
-            {
-                return CustomResult(HttpStatusCode.NotFound, "Friend not found");
-            }
-
             var group = this.Data.Groups.All().Where(g => g.Id == model.GroupId).FirstOrDefault();
             if (group == null)
             {
                 return CustomResult(HttpStatusCode.NotFound, "Group not found");
             }
-            var friend = friendGroup.Users.Where(u => u.Id == model.UserId).FirstOrDefault();
+
+            var friend = this.Data.Users.All().FirstOrDefault(u => u.Id == model.UserId);
+            if (friend == null)
+            {
+                return CustomResult(HttpStatusCode.NotFound, "Friend not found");
+            }
 
             group.Users.Add(friend);
             this.Data.SaveChanges();
 
-            return this.Ok();
+            return this.Ok(friend.UserName);
         }
 
         [HttpGet]

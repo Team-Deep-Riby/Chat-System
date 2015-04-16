@@ -4,6 +4,7 @@
     using Microsoft.AspNet.Identity.EntityFramework;
     using Migrations;
     using Models;
+    using System.Data.Entity.ModelConfiguration.Conventions;
 
     public class ApplicationDbContext : IdentityDbContext<User>
     {
@@ -22,6 +23,6 @@
 
         public DbSet<ChatGroup> ChatGroups { get; set; }
 
-        public DbSet<SentMessage> SentMessages { get; set; }
+        public DbSet<UserMessage> UserMessages { get; set; }
     }
 }

@@ -3,14 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Message
     {
-        private ICollection<User> recievers;
+        private ICollection<UserMessage> userMessages;
 
         public Message()
         {
-            this.recievers = new HashSet<User>();
+            this.userMessages = new HashSet<UserMessage>();
         }
 
         public int Id { get; set; }
@@ -24,20 +25,19 @@
         [Required]
         public string Content { get; set; }
 
-        [Required]
-        [MaxLength(128)]
+        [ForeignKey("Sender")]
         public string SenderId { get; set; }
-
-        [Required]
-        public int GroupId { get; set; }
-
+        [ForeignKey("SenderId")]
         public virtual User Sender { get; set; }
 
+        [ForeignKey("Group")]
+        public int GroupId { get; set; }
+        [ForeignKey("GroupId")]
         public virtual ChatGroup Group { get; set; }
 
-        public virtual ICollection<User> Recievers
+        public virtual ICollection<UserMessage> UserMessages
         {
-            get { return recievers; }
+            get { return userMessages; }
         }
     }
 }

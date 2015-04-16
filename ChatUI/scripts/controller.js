@@ -213,14 +213,30 @@ app.controller = (function () {
     }
 
     function changeReciver(ev) {
+        var _this = this;
+        var user = this._data.users.getLoginUserData();
         var $target = $(ev.target);
         var reciverName = $target.text();
         var reciverId = $target.parent().attr('id');
-        var $reciver = $('#reciver-name').text(reciverName);
+        if($('#groups')[0].classList.contains('active')){
+            _this._data.groups.getUsers(reciverId, user.sessionToken)
+                .then(function (users) {
+                    var names = [];
+                    var i;
+                    for(i = 0; i < users.length; i++){
+                        names.push(users[i].UserName)
+                    }
+
+                    $('#reciver-name #users').text(names.join(', '));
+                    $('#reciver-name #name').text(reciverName + ': ');
+                });
+        }
+
+        var $reciver = $('#reciver-name #name').text(reciverName);
+        $('#reciver-name #users').text('');
         $reciver.attr('data-group-id', reciverId);
         $('#chat-window').removeClass('hide');
 
-        var user = this._data.users.getLoginUserData();
         refreshMessagesWindow.call(this, user.sessionToken, reciverId);
     }
 
@@ -228,7 +244,7 @@ app.controller = (function () {
         var _this = this;
         var content = $('#inputMessage').val();
         var user = _this._data.users.getLoginUserData();
-        var groupId = $('#reciver-name').attr('data-group-id');
+        var groupId = $('#reciver-name #name').attr('data-group-id');
         _this._data.messages.send(user.sessionToken, groupId, content)
             .then(function (data) {
                 $('#inputMessage').val('');
@@ -254,17 +270,23 @@ app.controller = (function () {
 
 
     function AddFriendsInGroup() {
-        //todo
         var _this = this;
+        var user = _this._data.users.getLoginUserData();
         var friends = getFriendsOfCheckBoxList();
-        var groupId = $('#reciver-name').attr('data-group-id');
-        _this._data.groups.addUsers(groupId, friends.ids)
-            .then(function (){
-                _this._views.showFriendsInGroup(friends.names);
-            }, function () {
-                //todo
-                _this._views.showFriendsInGroup(friends.names);
-            });
+        var groupId = $('#reciver-name #name').attr('data-group-id');
+        var i;
+        var names = [];
+        for(i = 0; i <  friends.ids.length; i++){
+            _this._data.groups.addUsers(groupId, friends.ids[i], user.sessionToken)
+                .then(function (name){
+                    names.push(name);
+                    _this._views.showFriendsInGroup(names);
+                }, function (data) {
+                    var message = getMessageError(data);
+                    console.error('Error: ' + message);
+                });
+        }
+
      }
 
     function getFriendsOfCheckBoxList() {

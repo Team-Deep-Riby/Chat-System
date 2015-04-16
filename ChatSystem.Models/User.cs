@@ -7,17 +7,17 @@
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
 
-    public class User : IdentityUser 
+    public class User : IdentityUser
     {
         private ICollection<ChatGroup> chatGroups;
         private ICollection<Message> messages;
-        private ICollection<SentMessage> sentMessages;
+        private ICollection<UserMessage> userMessages;
 
         public User()
         {
             this.chatGroups = new HashSet<ChatGroup>();
             this.messages = new HashSet<Message>();
-            this.sentMessages = new HashSet<SentMessage>();
+            this.userMessages = new HashSet<UserMessage>();
         }
 
         public int NotReceivedMessagesCount { get; set; }
@@ -32,9 +32,9 @@
             get { return messages; }
         }
 
-        public virtual ICollection<SentMessage> SentMessages
+        public virtual ICollection<UserMessage> UserMessages
         {
-            get { return this.sentMessages; }
+            get { return this.userMessages; }
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager, string authenticationType)

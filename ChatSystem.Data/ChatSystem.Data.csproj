@@ -61,6 +61,7 @@
     <Compile Include="Repositories\GroupsRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\MessagesRepository.cs" />
+    <Compile Include="Repositories\UserMessagesRepository.cs" />
     <Compile Include="Repositories\UsersRepository.cs" />
   </ItemGroup>
   <ItemGroup>

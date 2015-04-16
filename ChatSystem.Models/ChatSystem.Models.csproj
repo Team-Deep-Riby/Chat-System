@@ -58,6 +58,7 @@
     <Compile Include="SentMessage.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserMessage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

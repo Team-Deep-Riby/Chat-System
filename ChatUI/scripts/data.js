@@ -142,14 +142,19 @@ app.data = (function () {
             return requester.post(this._dataUrl + '/create', 'application/json', this._service.headers, group);
         };
 
-        Group.prototype.addUsers = function (groupId, friendsIds, accessToken) {
+        Group.prototype.addUsers = function (groupId, friendsId, accessToken) {
             var data = {
                 groupId: groupId, //todo  look service
-                friendsIds : friendsIds //todo look service
+                userId : friendsId //todo look service
             };
 
             this.addHeader("Authorization", "bearer " + accessToken);
             return requester.post(this._dataUrl + '/friends/add', 'application/json', this._service.headers, data);
+        };
+
+        Group.prototype.getUsers = function (groupId, accessToken) {
+            this.addHeader("Authorization", "bearer " + accessToken);
+            return requester.get(this._dataUrl + '/friends/' + groupId, this._service.headers);
         };
 
         return Group;

@@ -3,9 +3,9 @@
     using System.Data.Entity;
     using Models;
 
-    public class UsersRepository : GenericRepository<User>
+    public class UserMessagesRepository : GenericRepository<UserMessage>
     {
-        public UsersRepository(DbContext context) 
+        public UserMessagesRepository(DbContext context)
             : base(context)
         {
         }

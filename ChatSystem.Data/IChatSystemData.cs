@@ -10,6 +10,7 @@
 
         GroupsRepository Groups { get; }
 
+        UserMessagesRepository UserMessages { get; }
         int SaveChanges();
 
     }

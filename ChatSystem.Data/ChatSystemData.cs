@@ -27,7 +27,10 @@
         {
             get { return (MessagesRepository) this.GetRepository<Message>(); }
         }
-
+        public UserMessagesRepository UserMessages
+        {
+            get { return (UserMessagesRepository)this.GetRepository<UserMessage>(); }
+        }
         public GroupsRepository Groups
         {
             get { return (GroupsRepository) this.GetRepository<ChatGroup>(); }
@@ -60,6 +63,10 @@
                     typeOfRepository = typeof(GroupsRepository);
                 }
 
+                if (type.IsAssignableFrom(typeof(UserMessage)))
+                {
+                    typeOfRepository = typeof(UserMessagesRepository);
+                }
                 var repository = Activator.CreateInstance(typeOfRepository, this.context);
                 this.repositories.Add(type, repository);
             }

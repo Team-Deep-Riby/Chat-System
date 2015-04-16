@@ -74,8 +74,14 @@ app.views = (function () {
     }
 
     function showFriendsInGroup(names){
-        var newText = $('#reciver-name').text() + ': ' + names.join(', ');
-        $('#reciver-name').text(newText);
+        var users = $('#reciver-name #users').text();
+        if(users === ''){
+            users = names.join(', ');
+        } else {
+            users += ', ' + names.join(', ')
+        }
+
+        var newText = $('#reciver-name #users').text(users);
     }
 
     function loadTemplate(name) {
